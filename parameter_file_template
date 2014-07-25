@@ -1,0 +1,7 @@
+<parameters>
+  <index>INDEX_LOCATION</index>
+  <corpus>
+    <path>CORPUS_LOCATION</path>
+    <class>html</class>
+  </corpus>
+</parameters>
