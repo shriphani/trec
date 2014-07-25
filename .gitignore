@@ -1,1 +1,6 @@
 *.parameter
+*.condor_submit*
+*.condor_run*
+*.condor_out*
+*.condor_log*
+*.condor_error*
