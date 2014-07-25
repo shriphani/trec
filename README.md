@@ -6,12 +6,23 @@ location: /bos/tmp17/gzheng/FedWeb
 
 observations: In FW14, 10 results per query and all snippets have associated html documents (what to do if results are jpeg or such?)
 
-Guoqing: Aren't JPEGs just thumbs for the pages?
+Guoqing: Aren't JPEGs just thumbs for the pages? - looks like that is the case.
+
+Indices for each collection: [indices.txt](indices.txt)
+IndriBuildIndex segfaulted on 4 collections (possibly a memory error).
+
+Implementation of that naive TFIDF based model from last year in [tdf_iwf.cpp](tdf_iwf.cpp).
+
+To run:
+```
+make
+./tdf_iwf "barack obama" 0  (searches using AND operator, use 1 for searching with OR).
+```
 
 ## Plan:
 
-* Build indri indices for all collections
-* Implement winning idea for 2013.
+* Build indri indices for all collections - almost done.
+* Implement winning idea for 2013. - done
 * REDDE/CORI etc because whatever.
 
 ## Misc:
