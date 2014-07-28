@@ -13,7 +13,8 @@ IndriBuildIndex segfaulted on 4 collections (possibly a memory error).
 
 Implementation of that naive TFIDF based model from last year in [tdf_iwf.cpp](tdf_iwf.cpp).
 
-Guoqing: I think we were trying to do the TWF.IRF model first? TWF of a node at an upper level is just the sum of the TWFs of its children.
+Guoqing: I think we were trying to do the TWF.IRF model first? TWF of a node at an upper level is just the sum of the TWF.IDFs of its children.
+
 
 To run:
 ```
