@@ -3,11 +3,11 @@ Generate parameter files for building indices
 '''
 import os
 
-FW14_INDICES_LOC = '/bos/tmp17/spalakod/trec/fw13/'
+FW14_INDICES_LOC = '/bos/tmp17/spalakod/trec/fw13_snippets_index/'
 
-FW14_SAMPLE_DOCS_LOC = '/bos/tmp17/gzheng/FedWeb/fedweb13/FW13-sample-docs/'
+FW14_SAMPLE_DOCS_LOC = '/bos/tmp17/spalakod/trec/fw13_snippets/'
 
-PARAMETER_FILE_TEMPLATE_LOC = 'parameter_file_template'
+PARAMETER_FILE_TEMPLATE_LOC = 'parameter_file_template_snippets'
 PARAMETER_FILE_TEMPLATE = None
 
 if __name__ == '__main__':
