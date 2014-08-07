@@ -4,7 +4,7 @@ from collections import defaultdict
 class WordVecSimilarity(object):
     def __init__(self, model_file):
         print 'Loading model %s ...' % model_file
-        self.model = gensim.models.Word2Vec.load_word2vec_format(model_file, binary=True)
+        #self.model = gensim.models.Word2Vec.load_word2vec_format(model_file, binary=True)
         print 'Loading model done.'
 
     # q is a list of processed terms

@@ -14,7 +14,7 @@ def handle_xml_file(engine_xml_file):
 	for search_result in samples:
 		for child in search_result:
 			if child.tag == 'query':
-				print child.attrib['id'], child.text
+				print '%s:%s' %(child.attrib['id'], child.text) # modified by guoqing
 
 if __name__ == '__main__':
 	engine_xml_file = sys.argv[1]

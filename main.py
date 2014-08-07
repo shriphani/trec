@@ -1,18 +1,27 @@
+from  configuration import *
+from word2vec_query_similarity import *
+
 import sys
-import configuration
-import word2vec_query_similarity
 import os
 import math
+import string
 
 # main entry for all three tasks here
+
+def query_preprocess(query_str):
+    exclude = set(string.punctuation)
+    qstr_processed = ''.join(ch for ch in query_str if ch not in exclude)
+    return qstr_processed
 
 def read_queries(query_file):
     queries = dict()
     with open(query_file, 'r') as qf:
         for line in qf:
-            parts = lint.strip().split(' ')
+            parts = line.strip().split(':')
             qid = int(parts[0])
-            query = parts[1].strip()
+            query = query_preprocess(parts[1].strip())
+
+            print qid, query
             
             queries[qid] = query
 
@@ -44,21 +53,20 @@ def resource_selection(wv_model, sample_queries, test_queries, engines, result_f
             
             for engine in engines:
                 engine_parts = engine.split('/')
-                engine_id = '%s-%s' % (engine_parts[-2].upper, engine_parts[-1])
+                engine_id = '%s-%s' % (engine_parts[-2].upper(), engine_parts[-1])
                 res_filename = '%s/%s_%d.res' % (RES_FOLDER, engine.split('/',4)[-1].replace('/', '_'), qid)
                 search_cmd = '%s -query.number=%d -query.text=\"%s\" -index=%s -count=1000 -trecFormat=t -rule=method:%s > %s' % ( INDRIRUNQUERY, qid, qstr, engine, rm, res_filename)
                 print 'Searching qid: %d query: %s with engine %s ... ' % (qid, qstr, engine)
                 os.system(search_cmd)
 
                 with open(res_filename, 'r') as engine_res_file:
-
                     resource_score = 0
                     for line in engine_res_file:
                         parts = line.strip().split(' ')
                         docno = parts[2].strip()
                         rank = int(parts[3])
                         indri_raw_score = float(parts[4])
-                        score = indir_score(indri_raw_score, rm)
+                        score = indri_score(indri_raw_score, rm)
 
                         sample_qid = int(docno.split('/')[-1].split('_')[0])
                         sample_qstr = sample_queries[sample_qid]
