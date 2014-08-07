@@ -13,4 +13,8 @@ RETRIEVAL_TOP_DOCS = [1000]
 
 INDRIRUNQUERY = '/bos/usr0/gzheng/.local/bin/IndriRunQuery'
 
+SAMPLE_QUERY_FILE = ''
+
+TEST_QUERY_FILE = ''
+
 
