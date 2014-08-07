@@ -1,4 +1,5 @@
 <parameters>
+  <memory>1g</memory>
   <index>INDEX_LOCATION</index>
   <corpus>
     <path>CORPUS_LOCATION</path>
