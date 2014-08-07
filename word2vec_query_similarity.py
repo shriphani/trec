@@ -9,10 +9,11 @@ class WordVecSimilarity(object):
 
     # q is a list of processed terms
     def similarity(self, q1, q2):
+        return 1.0
 
         try:
             rep = model[term]
         except KeyError:
             print 'KEY ERROR FOR:', ' ', 'abandoned.'
             
-        return 1.0
+

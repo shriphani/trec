@@ -7,14 +7,18 @@ WORD_VECTOR_MODELS = [ '/bos/tmp17/gzheng/clueweb09b-new-100.bin',
 
 SEARCH_ENGINES_FILE = 'indices.txt'
 
-RETRIEVAL_MODELS = ['LM', 'BM25']
+RETRIEVAL_MODELS = ['dirichlet', 'okapi']
 
 RETRIEVAL_TOP_DOCS = [1000]
 
 INDRIRUNQUERY = '/bos/usr0/gzheng/.local/bin/IndriRunQuery'
 
+RES_FOLDER = '/bos/tmp17/gzheng/fedweb_res'
+
 SAMPLE_QUERY_FILE = ''
 
 TEST_QUERY_FILE = ''
+
+RUNID = 'CMU'
 
 
