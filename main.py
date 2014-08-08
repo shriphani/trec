@@ -20,9 +20,6 @@ def read_queries(query_file):
             parts = line.strip().split(':')
             qid = int(parts[0])
             query = query_preprocess(parts[1].strip())
-
-            print qid, query
-            
             queries[qid] = query
 
     return queries
@@ -56,7 +53,7 @@ def resource_selection(wv_model, sample_queries, test_queries, engines, result_f
                 engine_id = '%s-%s' % (engine_parts[-2].upper(), engine_parts[-1])
                 res_filename = '%s/%s_%d.res' % (RES_FOLDER, engine.split('/',4)[-1].replace('/', '_'), qid)
                 search_cmd = '%s -query.number=%d -query.text=\"%s\" -index=%s -count=1000 -trecFormat=t -rule=method:%s > %s' % ( INDRIRUNQUERY, qid, qstr, engine, rm, res_filename)
-                print 'Searching qid: %d query: %s with engine %s ... ' % (qid, qstr, engine)
+                print 'SEARCHING QID: %d QUERy: %s WITH ENGINE: %s ... ' % (qid, qstr, engine)
                 os.system(search_cmd)
 
                 with open(res_filename, 'r') as engine_res_file:
@@ -71,7 +68,8 @@ def resource_selection(wv_model, sample_queries, test_queries, engines, result_f
                         sample_qid = int(docno.split('/')[-1].split('_')[0])
                         sample_qstr = sample_queries[sample_qid]
 
-                        wv_similarity = wv_model.similarity(sample_qstr, qstr)
+                        wv_similarity = wv_model.similarity(sample_qid, sample_qstr, qid, qstr)
+                        print ' == WORD VECTOR SIMILARITY OF # %s AND %s # IS %f ' % (sample_qstr, qstr, wv_similarity)
 
                         resource_score += wv_similarity * score
 
@@ -87,6 +85,7 @@ def resource_selection(wv_model, sample_queries, test_queries, engines, result_f
 
 if __name__ == '__main__':
     wv_model = WordVecSimilarity(WORD_VECTOR_MODELS[-1])
+#    wv_model = WordVecSimilarity(WORD_VECTOR_MODELS[0])
     
     test_queries = read_queries(TEST_QUERY_FILE)
     sample_queries = read_queries(SAMPLE_QUERY_FILE)
