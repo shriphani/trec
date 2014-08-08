@@ -53,9 +53,9 @@ def read_resource_vertical_mapping(resource_vertical_mapping_file):
 
     return rv_dict
 
-def resource_vertical_selection(wv_model, sample_queries, test_queries, engines, rv_dict, res_result_file, vertical_result_file):
+def resource_selection(wv_model, sample_queries, test_queries, engines, res_result_file):
 
-    with open(res_result_file, 'w') as res_out, open(vertical_result_file, 'w') as ver_out:
+    with open(res_result_file, 'w') as res_out:#, open(vertical_result_file, 'w') as ver_out:
         for qid in test_queries:
             resource_score_list = []
             qstr = test_queries[qid]
@@ -96,7 +96,7 @@ def resource_vertical_selection(wv_model, sample_queries, test_queries, engines,
             for record in resource_score_list:
                 res_out.write('%d Q0 %s %d %f %s\n' % (qid, record[1], resource_rank, record[0], RUNID))
                 resource_rank += 1
-
+'''
                 vertical = rv_dict[record[1]]
                 if vertical in vertical_score_dict:
                     vertical_score_dict[vertical] += record[0]
@@ -113,15 +113,15 @@ def resource_vertical_selection(wv_model, sample_queries, test_queries, engines,
             top_verticals = 10
             for record in vertical_score_list[:top_verticals]:
                 ver_out.write('%d %s %s\n' % (qid, record[1], RUNID))
-
+'''
 # for 2013, pages for testing queries are provided
-def result_merging_2013():
+#def result_merging_2013():
 
 # for 2014, no page for testing queries are provided
-def result_merging_2014():
+#def result_merging_2014():
 
 if __name__ == '__main__':
-    wv_model = WordVecSimilarity(WORD_VECTOR_MODELS[-1])
+    wv_model = WordVecSimilarity(WORD_VECTOR_MODELS[-2])
 #    wv_model = WordVecSimilarity(WORD_VECTOR_MODELS[0])
     
     test_queries = read_queries(TEST_QUERY_FILE)
@@ -132,7 +132,7 @@ if __name__ == '__main__':
     res_result_file = 'test_rs.res'
     ver_result_file = 'test_ver.res'
 
-    resource_selection(wv_model, sample_queries, test_queries, engines, res_result_file, ver_result_file)
+    resource_selection(wv_model, sample_queries, test_queries, engines, res_result_file)#, ver_result_file)
     
     
     
