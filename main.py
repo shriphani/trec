@@ -38,16 +38,30 @@ def indri_score(raw_score, rm):
     elif rm == 'okapi':
         return raw_score
 
+def read_resource_vertical_mapping(resource_vertical_mapping_file):
+    rv_dict = dict()
+    with open(resource_vertial_mapping_file, 'r') as rv_mapping:
+        for line in rv_mapping:
+            if not line.startswith('FW14'):
+                continue
+            
+            parts = line.split('\t')
+            engine_id = parts[0].strip()
+            vertical_id = parts[-1].strip()
+            rv_dict[engine_id] = vertical_id
 
-def resource_selection(wv_model, sample_queries, test_queries, engines, result_file):
-    with open(result_file, 'w') as res_out:
+
+    return rv_dict
+
+def resource_vertical_selection(wv_model, sample_queries, test_queries, engines, rv_dict, res_result_file, vertical_result_file):
+
+    with open(res_result_file, 'w') as res_out, open(vertical_result_file, 'w') as ver_out:
         for qid in test_queries:
+            resource_score_list = []
             qstr = test_queries[qid]
             
             rm = RETRIEVAL_MODELS[0]
 
-            resource_score_list = []
-            
             for engine in engines:
                 engine_parts = engine.split('/')
                 engine_id = '%s-%s' % (engine_parts[-2].upper(), engine_parts[-1])
@@ -69,7 +83,7 @@ def resource_selection(wv_model, sample_queries, test_queries, engines, result_f
                         sample_qstr = sample_queries[sample_qid]
 
                         wv_similarity = wv_model.similarity(sample_qid, sample_qstr, qid, qstr)
-                        print ' == WORD VECTOR SIMILARITY OF # %s AND %s # IS %f ' % (sample_qstr, qstr, wv_similarity)
+                        print '== WORD VECTOR SIMILARITY OF # %s AND %s # IS %f ==' % (sample_qstr, qstr, wv_similarity)
 
                         resource_score += wv_similarity * score
 
@@ -78,10 +92,33 @@ def resource_selection(wv_model, sample_queries, test_queries, engines, result_f
             resource_score_list.sort(reverse=True)
 
             resource_rank = 1
+            vertical_score_dict = dict()
             for record in resource_score_list:
                 res_out.write('%d Q0 %s %d %f %s\n' % (qid, record[1], resource_rank, record[0], RUNID))
                 resource_rank += 1
 
+                vertical = rv_dict[record[1]]
+                if vertical in vertical_score_dict:
+                    vertical_score_dict[vertical] += record[0]
+                else:
+                    vertical_score_dict[vertical] = record[0]
+
+            vertical_score_list = []
+            for key, value in vertical_score_dict.iteritems():
+                vertical_score_list.append((value, key))
+
+            vertical_score_list.sort(reverse=True)
+            
+            # NOTE HERE ONLY OUTPUT TOP 10 VERTICALS
+            top_verticals = 10
+            for record in vertical_score_list[:top_verticals]:
+                ver_out.write('%d %s %s\n' % (qid, record[1], RUNID))
+
+# for 2013, pages for testing queries are provided
+def result_merging_2013():
+
+# for 2014, no page for testing queries are provided
+def result_merging_2014():
 
 if __name__ == '__main__':
     wv_model = WordVecSimilarity(WORD_VECTOR_MODELS[-1])
@@ -92,9 +129,10 @@ if __name__ == '__main__':
 
     engines = read_engines(SEARCH_ENGINES_FILE)
 
-    result_file = 'test_rs.res'
+    res_result_file = 'test_rs.res'
+    ver_result_file = 'test_ver.res'
 
-    resource_selection(wv_model, sample_queries, test_queries, engines, result_file)
+    resource_selection(wv_model, sample_queries, test_queries, engines, res_result_file, ver_result_file)
     
     
     
