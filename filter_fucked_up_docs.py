@@ -22,7 +22,7 @@ def repair_corpus(index_dir):
 			)
 			if magic_string[-1].find('gzip compressed data') >= 0:
 				orig_name = os.path.join(docs, doc)
-				orig_name = os.rename(orig_name, orig_name + '.fucked_up')
+				os.rename(orig_name, orig_name + '.fucked_up')
 				print 'renamed:', orig_name
 
 
