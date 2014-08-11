@@ -1,10 +1,12 @@
 # Put constants and configurations here
 
-WORD_VECTOR_MODELS = [ '/bos/tmp17/gzheng/clueweb09b-new-100.bin',
-                       '/bos/tmp17/gzheng/clueweb09b-new-300.bin',
-                       '/bos/tmp17/gzheng/clueweb09b-new-500.bin',
+WORD_VECTOR_MODELS = [
                        '/bos/usr0/gzheng/TermRecall/src/word2vec/GoogleNews-vectors-negative300.bin',
-                       '/bos/tmp17/gzheng/trec7-300.bin']
+                       #'/bos/tmp17/gzheng/clueweb09b-new-100.bin',
+                       '/bos/tmp17/gzheng/clueweb09b-new-300.bin',
+                       #'/bos/tmp17/gzheng/clueweb09b-new-500.bin',
+                       #'/bos/tmp17/gzheng/trec7-300.bin'
+]
 
 
 SEARCH_ENGINES_FILE = 'FW13-indices.txt'

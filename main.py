@@ -1,10 +1,11 @@
-from  configuration import *
+from configuration import *
 from word2vec_query_similarity import *
 
 import sys
 import os
 import math
 import string
+import os.path
 
 # main entry for all three tasks here
 
@@ -33,10 +34,14 @@ def read_engines(engine_file):
     return engines
 
 def indri_score(raw_score, rm):
+    return math.exp(raw_score)
+    
+    ''' # this needs to be confirmed 
     if rm == 'dirichlet':
         return math.exp(raw_score)
     elif rm == 'okapi':
         return raw_score
+    '''
 
 def read_resource_vertical_mapping(resource_vertical_mapping_file):
     rv_dict = dict()
@@ -53,22 +58,22 @@ def read_resource_vertical_mapping(resource_vertical_mapping_file):
 
     return rv_dict
 
-def resource_selection(wv_model, sample_queries, test_queries, engines, res_result_file):
-
+def resource_selection(wv_model, sample_queries, test_queries, engines, rm, res_result_file):
     with open(res_result_file, 'w') as res_out:#, open(vertical_result_file, 'w') as ver_out:
         for qid in test_queries:
             resource_score_list = []
             qstr = test_queries[qid]
-            
-            rm = RETRIEVAL_MODELS[0]
 
             for engine in engines:
                 engine_parts = engine.split('/')
                 engine_id = '%s-%s' % (engine_parts[-2].upper(), engine_parts[-1])
-                res_filename = '%s/%s_%d.res' % (RES_FOLDER, engine.split('/',4)[-1].replace('/', '_'), qid)
-                search_cmd = '%s -query.number=%d -query.text=\"%s\" -index=%s -count=1000 -trecFormat=t -rule=method:%s > %s' % ( INDRIRUNQUERY, qid, qstr, engine, rm, res_filename)
-                print 'SEARCHING QID: %d QUERy: %s WITH ENGINE: %s ... ' % (qid, qstr, engine)
-                os.system(search_cmd)
+                res_filename = '%s/%s_%d_%s.res' % (RES_FOLDER, engine.split('/',4)[-1].replace('/', '_'), qid, rm)
+                if os.path.isfile(res_filename):
+                    print 'READ CACHE SEARCH FOR QID: %d QUERy: %s WITH ENGINE: %s ... ' % (qid, qstr, engine)
+                else:
+                    search_cmd = '%s -query.number=%d -query.text=\"%s\" -index=%s -count=1000 -trecFormat=t -rule=method:%s > %s' % ( INDRIRUNQUERY, qid, qstr, engine, rm, res_filename)
+                    print 'SEARCHING QID: %d QUERy: %s WITH ENGINE: %s ... ' % (qid, qstr, engine)
+                    os.system(search_cmd)
 
                 with open(res_filename, 'r') as engine_res_file:
                     resource_score = 0
@@ -120,20 +125,23 @@ def resource_selection(wv_model, sample_queries, test_queries, engines, res_resu
 # for 2014, no page for testing queries are provided
 #def result_merging_2014():
 
+def get_wordvector_id(modelfile):
+    if 'GoogleNews' in modelfile:
+        return 'G'
+    else:
+        return 'C'
+
 if __name__ == '__main__':
-    wv_model = WordVecSimilarity(WORD_VECTOR_MODELS[-2])
-#    wv_model = WordVecSimilarity(WORD_VECTOR_MODELS[0])
-    
     test_queries = read_queries(TEST_QUERY_FILE)
     sample_queries = read_queries(SAMPLE_QUERY_FILE)
-
     engines = read_engines(SEARCH_ENGINES_FILE)
 
-    res_result_file = 'test_rs.res'
-    ver_result_file = 'test_ver.res'
+    for wv_model_file in WORD_VECTOR_MODELS:
+        wv_model = WordVecSimilarity(wv_model_file)
+        #    wv_model = WordVecSimilarity(WORD_VECTOR_MODELS[0])
 
-    resource_selection(wv_model, sample_queries, test_queries, engines, res_result_file)#, ver_result_file)
-    
-    
-    
-    
+        for rm in RETRIEVAL_MODELS:
+            res_result_file = 'cmu-RS-%s-%s.res' % (rm, get_wordvector_id(wv_model_file))
+            resource_selection(wv_model, sample_queries, test_queries, engines, rm, res_result_file)
+
+        gc.collect()
